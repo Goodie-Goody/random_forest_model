@@ -13,8 +13,8 @@ RUN pip install -r requirements.txt
 # Install jupyter
 RUN pip install jupyter
 
-# Run the notebook to generate model if needed
-
+# Run the notebook to generate the model if needed
+RUN jupyter nbconvert --to notebook --execute machine_learning_project.ipynb
 
 # Copy the rest of the application code to the container
 COPY . .
