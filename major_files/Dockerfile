@@ -9,7 +9,12 @@ COPY requirements.txt .
 
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
+
+# Install jupyter
 RUN pip install jupyter
+
+# Run the notebook to generate model if needed
+
 
 # Copy the rest of the application code to the container
 COPY . .
