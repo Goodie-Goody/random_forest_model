@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Housing Prices</title>
+    <style>
+        /* Your existing styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #50b3a2;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #e8491d 3px solid;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        header #branding {
+            float: left;
+        }
+        header #branding h1 {
+            margin: 0;
+        }
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+        header .highlight,
+        header .current a {
+            color: #e8491d;
+            font-weight: bold;
+        }
+        header a:hover {
+            color: #cccccc;
+            font-weight: bold;
+        }
+        #showcase {
+            min-height: 400px;
+            background: #50b3a2;
+            text-align: center;
+            color: #fff;
+        }
+        #showcase h1 {
+            margin-top: 100px;
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+        #showcase p {
+            font-size: 20px;
+            color: #000;
+        }
+        .button_1 {
+            height: 38px;
+            background: #e8491d;
+            border: 0;
+            padding-left: 20px;
+            padding-right: 20px;
+            color: #fff;
+        }
+        .container form {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f4f4f4;
+            border-radius: 5px;
+        }
+        .container form input[type="text"],
+        .container form input[type="number"],
+        .container form input[type="file"],
+        .container form button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        .container form button {
+            background: #50b3a2;
+            color: #fff;
+            border: 0;
+            cursor: pointer;
+        }
+        .container form button:hover {
+            background: #45a089;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #50b3a2;
+            color: white;
+        }
+        td input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+    <script>
+        function addRow() {
+            var table = document.getElementById("inputTable");
+            var row = table.insertRow(-1);
+            var columns = ["longitude", "latitude", "housing_median_age", "total_rooms", "total_bedrooms", "population", "households", "median_income", "ocean_proximity"];
+            for (var i = 0; i < columns.length; i++) {
+                var cell = row.insertCell(i);
+                var input = document.createElement("input");
+                input.type = i === 8 ? "text" : "number"; // ocean_proximity is text, others are numbers
+                input.step = "any"; // Allow float values
+                input.name = columns[i];
+                cell.appendChild(input);
+            }
+        }
+
+        function collectData() {
+            var table = document.getElementById("inputTable");
+            var rows = table.rows;
+            var csvData = [];
+            var columns = ["longitude", "latitude", "housing_median_age", "total_rooms", "total_bedrooms", "population", "households", "median_income", "ocean_proximity"];
+            for (var i = 1; i < rows.length; i++) {
+                var cells = rows[i].cells;
+                var rowData = [];
+                for (var j = 0; j < cells.length; j++) {
+                    rowData.push(cells[j].children[0].value);
+                }
+                csvData.push(rowData.join(","));
+            }
+            document.getElementById("csvInput").value = columns.join(",") + "\n" + csvData.join("\n");
+        }
+
+        async function submitForm(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            collectData(); // Prepare CSV data
+
+            const formData = new FormData(event.target);
+
+            const response = await fetch(event.target.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const jsonResponse = await response.json();
+                if (jsonResponse.download_link) {
+                    window.location.href = jsonResponse.download_link;
+                } else {
+                    handlePredictionResponse(jsonResponse);
+                }
+            } else {
+                console.error('Prediction failed.');
+            }
+        }
+
+        function downloadCSV(csv, filename) {
+            var csvFile;
+            var downloadLink;
+
+            csvFile = new Blob([csv], { type: "text/csv" });
+
+            downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+
+        function handlePredictionResponse(response) {
+            var csv = "longitude,latitude,housing_median_age,total_rooms,total_bedrooms,population,households,median_income,ocean_proximity,prediction\n";
+            response.prediction.forEach(function(pred, index) {
+                var row = document.getElementById("inputTable").rows[index + 1];
+                var rowData = [];
+                for (var i = 0; i < row.cells.length; i++) {
+                    rowData.push(row.cells[i].children[0].value);
+                }
+                rowData.push(pred);
+                csv += rowData.join(",") + "\n";
+            });
+            downloadCSV(csv, "predictions.csv");
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Housing Price Predictor</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="current"><a href="/">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="showcase">
+        <div class="container">
+            <h1>Predict Housing Prices</h1>
+            <p>Enter your data to get predictions on housing prices.</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <h2>Enter Data Manually</h2>
+        <form id="predictionForm" action="/predict" method="post" onsubmit="submitForm(event)">
+            <table id="inputTable">
+                <tr>
+                    <th>Longitude</th>
+                    <th>Latitude</th>
+                    <th>Housing Median Age</th>
+                    <th>Total Rooms</th>
+                    <th>Total Bedrooms</th>
+                    <th>Population</th>
+                    <th>Households</th>
+                    <th>Median Income</th>
+                    <th>Ocean Proximity</th>
+                </tr>
+                <tr>
+                    <td><input type="number" name="longitude" step="any"></td>
+                    <td><input type="number" name="latitude" step="any"></td>
+                    <td><input type="number" name="housing_median_age" step="any"></td>
+                    <td><input type="number" name="total_rooms" step="any"></td>
+                    <td><input type="number" name="total_bedrooms" step="any"></td>
+                    <td><input type="number" name="population" step="any"></td>
+                    <td><input type="number" name="households" step="any"></td>
+                    <td><input type="number" name="median_income" step="any"></td>
+                    <td><input type="text" name="ocean_proximity"></td>
+                </tr>
+            </table>
+            <br>
+            <button type="button" onclick="addRow()">Add Row</button>
+            <br>
+            <input type="hidden" id="csvInput" name="input_data">
+            <button type="submit">Predict</button>
+        </form>
+        <div id="result"></div>
+    </div>
+</body>
+</html>
