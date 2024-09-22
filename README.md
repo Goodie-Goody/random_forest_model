@@ -6,23 +6,40 @@ This project is based on Chapter 2 of Aurélien Géron’s book, Hands-On Machin
 
 This project involves building a machine learning model from scratch to predict housing prices in California using the California Housing Dataset from the 1990 census. The steps include:
 
-## Problem Definition: Predicting housing prices based on various features from the dataset.
+## Problem Definition
 
-## Data Collection: Using the California Housing Dataset gathered from the 1990 census.
+Predicting housing prices based on various features from the dataset.
 
-## Data Exploration and Visualization: Understanding the data through various visualizations and statistical analyses.
+## Data Collection
 
-## Data Preprocessing: Cleaning and preparing the data for modeling.
+Using the California Housing Dataset gathered from the 1990 census.
 
-## Model Building: Selecting and training machine learning models.
+## Data Exploration and Visualization
 
-## Model Evaluation: Assessing the performance of the models.
+Understanding the data through various visualizations and statistical analyses.
 
-## Model Fine-Tuning: Optimizing the models for better performance.
+## Data Preprocessing
 
-## Model Deployment: Deploying the final model for practical use.
+Cleaning and preparing the data for modeling.
+
+## Model Building
+
+Selecting and training machine learning models.
+
+## Model Evaluation
+
+Assessing the performance of the models.
+
+## Model Fine-Tuning
+
+Optimizing the models for better performance.
+
+## Model Deployment
+
+Deploying the final model for practical use.
 
 ## Installation
+
 To run this project, you need to have Python and the following libraries installed:
 
 Scikit-Learn, Pandas, NumPy, Matplotlib, Flask
@@ -34,22 +51,28 @@ You can install the required libraries using the following command:
 Usage
 
 Clone the repository:
-git clone https://github.com/yourusername/your-repo-name.git
+
+  git clone https://github.com/yourusername/your-repo-name.git
 
 Navigate to the project directory:
-cd your-repo-name
+  
+  cd your-repo-name
 
 Run the Jupyter Notebook to generate the model:
-jupyter notebook notebooks/your_notebook.ipynb
+  
+  jupyter notebook notebooks/your_notebook.ipynb
 
 Once the model is generated, build the Docker image:
-docker build -t your-image-name -f major_files/Dockerfile .
-
+  
+  docker build -t your-image-name -f major_files/Dockerfile .
+  
 Run the Docker container:
-docker run -p 5000:5000 your-image-name
+
+  docker run -p 5000:5000 your-image-name
 
 Open your web browser and go to:
-http://localhost:5000
+  
+  http://localhost:5000
 
 ## Project Structure
 
