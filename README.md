@@ -91,14 +91,6 @@ housing.head()
 
 This will display the first five rows, each representing one district with the attributes listed above.
 
-## Conclusion
-
-With this setup, you are ready to start designing and coding your predictive model. Good luck, and let's improve the accuracy of housing price predictions in California!
-
----
-
-This README provides a clear and concise overview of the project, covering the essential details and instructions for getting started. You can include images within the README using the Markdown syntax for images if needed.
-
 ## Data Exploration and Visualization
 
 Understanding the data through various visualizations and statistical analyses.
